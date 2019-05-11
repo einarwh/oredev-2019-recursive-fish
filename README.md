@@ -1,3 +1,3 @@
-# Picture combinators and recursive fish 
+# Escher in Elm
 
-Repo for my live-coding session at Oslo Elm Day 2019.
+Repo for my live-coding session at NewCrafts 2019.
