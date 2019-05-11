@@ -109,7 +109,7 @@ toBoxLine m v1 v2 (name, color) =
       , markerEnd <| "url(#" ++ name ++ ")" ] []
 
 acolor : String 
-acolor = "#88499c"
+acolor = "#b22327"
 
 bcolor : String 
 bcolor = "#2381bf"

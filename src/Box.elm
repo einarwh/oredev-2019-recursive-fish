@@ -64,3 +64,4 @@ splitHorizontally f box =
     right = box |> moveHorizontally f |> scaleHorizontally (1 - f)
   in
     (left, right)
+    
