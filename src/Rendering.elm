@@ -9,6 +9,11 @@ import Mirror exposing (..)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
+useArrows = True
+useDottedLine = True
+dottedLineColor = "grey"
+solidLineColor = "red"
+
 toString : Float -> String 
 toString = String.fromFloat
 
@@ -76,8 +81,8 @@ toSvgElement style shape =
       toCurveElement style point1 point2 point3 point4 
     x -> text "nothing"
 
-toBoxPolylineElement : List Vector -> Svg msg
-toBoxPolylineElement pts = 
+toDottedBoxPolylineElement : List Vector -> Svg msg
+toDottedBoxPolylineElement pts = 
   let 
     s = 
       let 
@@ -87,11 +92,31 @@ toBoxPolylineElement pts =
     sw = 1
   in
     Svg.polyline 
-      [ stroke "Grey"
+      [ stroke dottedLineColor
       , strokeWidth <| toString sw
       , strokeDasharray "2,2"
       , fill "None"
       , points s ] []
+
+toSolidBoxPolylineElement : List Vector -> Svg msg
+toSolidBoxPolylineElement pts = 
+  let 
+    s = 
+      let 
+        str {x, y} = (toString x) ++ "," ++ (toString y)
+      in
+        pts |> List.map str |> String.join " "
+    sw = 1
+  in
+    Svg.polyline 
+      [ stroke solidLineColor
+      , strokeWidth <| toString sw
+      , fill "None"
+      , points s ] []
+
+toBoxPolylineElement : List Vector -> Svg msg 
+toBoxPolylineElement = 
+  if useDottedLine then toDottedBoxPolylineElement else toSolidBoxPolylineElement
 
 toBoxLine : (Vector -> Vector) -> Vector -> Vector -> (String, String) -> Svg msg
 toBoxLine m v1 v2 (name, color) = 
@@ -232,6 +257,7 @@ toSvgWithBoxes bounds boxes rendering =
     mirror = mirrorVector <| toFloat h
     boxShapes = boxes |> List.map (toBoxShape mirror) |> List.map toBoxPolylineElement
     boxArrows = boxes |> List.concatMap (toBoxArrows mirror)
+    boxLines = if useArrows then boxShapes ++ boxArrows else boxShapes
     toElement (shape, style) = toSvgElement style (mirrorShape mirror shape)
     things = rendering |> List.map toElement
     axes = createAxes w h
@@ -243,7 +269,7 @@ toSvgWithBoxes bounds boxes rendering =
     svgElements = 
       case boxes of 
       [] -> things
-      _ -> ([defs] ++ things ++ boxShapes ++ boxArrows ++ axes)
+      _ -> ([defs] ++ things ++ boxLines ++ axes)
   in
     svg
       [ version "1.1"
