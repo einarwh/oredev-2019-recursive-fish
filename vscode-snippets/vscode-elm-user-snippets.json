@@ -1,4 +1,12 @@
 {
+	"insert lambda": {
+		"prefix": "lam",
+		"body": [
+			"\\"
+		],
+		"description": "Insert a lambda character"
+	},
+
 	"turnBox (outline)": {
 		"prefix": "turnBox-outline",
 		"body": [
@@ -123,7 +131,7 @@
 		"prefix": "splitVertically-outline",
 		"body": [
 			"splitVertically : Float -> Box -> (Box, Box)",
-			"splitVertically f box = (box, box)",
+			"splitVertically f box = (box, box)"
 		],
 		"description": "Insert splitVertically function outline"
 	},
@@ -194,7 +202,7 @@
 		"prefix": "splitHorizontally-outline",
 		"body": [
 			"splitHorizontally : Float -> Box -> (Box, Box)",
-			"splitHorizontally f box = (box, box)",
+			"splitHorizontally f box = (box, box)"
 		],
 		"description": "Insert splitHorizontally function outline"
 	},
@@ -214,7 +222,7 @@
 	},
 
 	"turn (outline)": {
-		"prefix": "turn",
+		"prefix": "turn-outline",
 		"body": [
 			"turn : Picture -> Picture",
 			"turn p = blank"
@@ -243,8 +251,8 @@
 	"flip (solution)": {
 		"prefix": "cheat-flip",
 		"body": [
-			"turn : Picture -> Picture",
-			"turn p = flipBox >> p"
+			"flip : Picture -> Picture",
+			"flip p = flipBox >> p"
 		],
 		"description": "Insert flip function solution"
 	},	
@@ -366,7 +374,7 @@
 			"quartet : Picture -> Picture -> Picture -> Picture -> Picture",
 			"quartet nw ne sw se =",
 			"  above (beside nw ne)",
-			"        (beside sw se)",
+			"        (beside sw se)"
 		],
 		"description": "Insert quartet function outline"
 	},
@@ -374,7 +382,7 @@
 	"nonet (outline)": {
 		"prefix": "nonet-outline",
 		"body": [
-			"nonet : Picture -> Picture -> Picture -> Picture -> Picture",
+			"nonet : Picture -> Picture -> Picture -> Picture -> Picture -> Picture -> Picture -> Picture -> Picture -> Picture",
 			"nonet nw nm ne mw mm me sw sm se = blank"
 		],
 		"description": "nonet beside function outline"
@@ -391,7 +399,7 @@
 			"  in",
 			"    col (row nw nm ne)", 
 			"        (row mw mm me)",
-			"        (row sw sm se)",
+			"        (row sw sm se)"
 		],
 		"description": "Insert nonet function outline"
 	},
@@ -436,6 +444,31 @@
 			"    fish |> over fishN |> over fishE"
 		],
 		"description": "Insert ttile function solution"
+	},
+
+	"utile (outline)": {
+		"prefix": "utile-outline",
+		"body": [
+			"utile : Picture -> Picture",
+			"utile fish = blank"
+		],
+		"description": "Insert utile function outline"
+	},
+
+	"utile (solution)": {
+		"prefix": "cheat-utile",
+		"body": [
+			"utile : Picture -> Picture",
+			"utile fish =",
+			"  let",
+			"    fishN = fish |> toss |> flip",
+			"    fishW = fishN |> turn",
+			"    fishS = fishW |> turn",
+			"    fishE = fishS |> turn",
+			"  in",
+			"    fishN |> over fishW |> over fishS |> over fishE"
+		],
+		"description": "Insert utile function solution"
 	},
 
 	"side (outline)": {
@@ -525,5 +558,67 @@
 			"times n fn = identity"
 		],
 		"description": "Insert times function solution"
+	},
+
+	"times (solution)": {
+		"prefix": "cheat-times",
+		"body": [
+			"times : Int -> (a -> a) -> (a -> a)",
+			"times n fn =",
+			"  if n < 1 then identity",
+			"  else fn >> times (n - 1) fn"
+		],
+		"description": "Insert times function solution"
 	},	
+	
+	"sideBoxes (solution)": {
+		"prefix": "cheat-sideBoxes",
+		"body": [
+		    "sideBoxes : Int -> Box -> List Box",
+			"sideBoxes n box =",
+			"  if n < 1 then [ box ]",
+			"  else",
+			"    let", 
+			"      (top, bot) = splitVertically 0.5 box",
+			"      (nw, ne) = splitHorizontally 0.5 top",
+			"      (sw, se) = splitHorizontally 0.5 bot",
+			"    in",
+			"      sideBoxes (n - 1) nw ++ sideBoxes (n - 1) ne ++ [sw, se]"
+		],
+		"description": "Insert sideBoxes function solution"
+	},
+
+	"westSideBoxes (solution)": {
+		"prefix": "cheat-westSideBoxes",
+		"body": [
+		    "westSideBoxes : Int -> Box -> List Box",
+		    "westSideBoxes n box =",
+			"  if n < 1 then [ box ]",
+			"  else",
+			"    let",
+			"      (top, bot) = splitVertically 0.5 box",
+			"      (nw, ne) = splitHorizontally 0.5 top",
+			"      (sw, se) = splitHorizontally 0.5 bot",
+			"    in",
+			"      westSideBoxes (n - 1) nw ++ westSideBoxes (n - 1) sw ++ [ne, se]"
+		],
+		"description": "Insert westSideBoxes function solution"
+	},
+
+	"cornerBoxes (solution)": {
+		"prefix": "cheat-cornerBoxes",
+		"body": [
+		    "cornerBoxes : Int -> Box -> List Box",
+			"cornerBoxes n box =",
+			"  if n < 1 then [ box ]",
+			"  else",
+			"    let",
+			"      (top, bot) = splitVertically 0.5 box",
+			"      (nw, ne) = splitHorizontally 0.5 top",
+			"      (sw, se) = splitHorizontally 0.5 bot",
+			"    in",
+			"      cornerBoxes (n - 1) nw ++ sideBoxes (n - 1) ne ++ westSideBoxes (n - 1) sw ++ [se]"
+		],
+		"description": "Insert cornerBoxes function solution"
+	}
 }
