@@ -9,41 +9,47 @@ type alias Box =
 
 turnBox : Box -> Box
 turnBox { a, b, c } =
-  { a = add a b
-  , b = c
+  { a = add a b 
+  , b = c 
   , c = neg b }
 
 flipBox : Box -> Box
 flipBox { a, b, c } =
-  { a = add a b
+  { a = add a b 
   , b = neg b
   , c = c }
 
 tossBox : Box -> Box
 tossBox { a, b, c } =
-  { a = add a (scale 0.5 (add b c)) 
+  { a = add a (scale 0.5 (add b c))
   , b = scale 0.5 (add b c)
   , c = scale 0.5 (sub c b) }
-  
-moveVertically : Float -> Box -> Box 
-moveVertically f { a, b, c } = 
-  { a = add a (scale f c)
+
+-- tossedBoxes : gather intermediate tossed boxes
+tossedBoxes : Int -> Box -> List Box
+tossedBoxes n box = 
+  if n < 1 then [ box ]
+  else box :: tossedBoxes (n - 1) (tossBox box)
+
+moveVertically : Float -> Box -> Box
+moveVertically f { a, b, c } =
+  { a = add a (scale f c) 
   , b = b
   , c = c }
 
-scaleVertically : Float -> Box -> Box 
-scaleVertically f { a, b, c } = 
+scaleVertically : Float -> Box -> Box
+scaleVertically f { a, b, c } =
   { a = a
-  , b = b 
+  , b = b
   , c = scale f c }
 
 splitVertically : Float -> Box -> (Box, Box)
 splitVertically f box = 
-  let 
+  let
     top = box |> moveVertically (1 - f) |> scaleVertically f
-    bot = box |> scaleVertically (1 - f)
-  in
-    (top, bot)
+    bot = box |> scaleVertically (1 - f) 
+  in 
+    (top, bot)  
 
 moveHorizontally : Float -> Box -> Box
 moveHorizontally f { a, b, c } =
@@ -64,7 +70,7 @@ splitHorizontally f box =
     right = box |> moveHorizontally f |> scaleHorizontally (1 - f)
   in
     (left, right)
-    
+
 sideBoxes : Int -> Box -> List Box
 sideBoxes n box =
   if n < 1 then [ box ]
@@ -97,4 +103,3 @@ cornerBoxes n box =
       (sw, se) = splitHorizontally 0.5 bot
     in
       cornerBoxes (n - 1) nw ++ sideBoxes (n - 1) ne ++ westSideBoxes (n - 1) sw ++ [se]
-      

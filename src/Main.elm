@@ -2,22 +2,23 @@ module Main exposing (main)
 
 import Box exposing (..)
 import Picture exposing (..)
+import Letter exposing (..)
+import Figure exposing (..)
 import Fishy exposing (fishShapes)
 import Fitting exposing (createPicture)
-import Rendering exposing (toSvg, toSvgWithBoxes)
-import Svg exposing (Svg)
 import Html exposing (Html)
-import Decor exposing (decorate)
+import Decor exposing (render)
 
 main : Html msg
 main = 
   let 
-    box = { a = { x = 100.0, y = 100.0 }
+    box = { a = { x = 100.0, y = 50.0 }
           , b = { x = 300.0, y = 0.0 }
           , c = { x = 0.0, y = 300.0 } }
     fish = createPicture fishShapes
+    f = createPicture fLetter
+    g = createPicture george
   in     
-    box |> fish 
-        |> toSvgWithBoxes (500, 500) [ box ]
-        |> decorate
+    box |> squareLimit 4 fish 
+        |> render []
  
