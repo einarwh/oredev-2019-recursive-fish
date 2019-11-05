@@ -1,14 +1,16 @@
 module Fitting exposing (createPicture)
 
 import Vector exposing (Vector, add, scale, length) 
+import Point exposing (..)
 import Box exposing (Box)
 import Shape exposing (..)
 import Style exposing (..)
 import Picture exposing (Picture)
 
-mapper : Box -> Vector -> Vector 
+mapper : Box -> Point -> Point 
 mapper { a, b, c } { x, y } =
-  add a (add (scale x b) (scale y c))
+  let { dx, dy } = add a (add (scale x b) (scale y c))
+  in { x = dx, y = dy}
 
 getStrokeWidth : Box -> Float
 getStrokeWidth { b, c } =
@@ -24,7 +26,7 @@ getStyle box =
                   , strokeColor = Black } 
   , fill = Nothing }
 
-mapShape : (Vector -> Vector) -> Shape -> Shape 
+mapShape : (Point -> Point) -> Shape -> Shape 
 mapShape m shape = 
   case shape of  
     Polygon { points } -> Polygon { points = List.map m points }
@@ -46,3 +48,4 @@ createPicture shapes box =
     style = getStyle box
   in 
     shapes |> List.map (mapShape m) |> List.map (\s -> (s, style))
+    

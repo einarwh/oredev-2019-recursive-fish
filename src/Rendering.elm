@@ -1,5 +1,6 @@
 module Rendering exposing (toSvg, toSvgWithBoxes)
 
+import Point exposing (..)
 import Vector exposing (..)
 import Shape exposing (..)
 import Style exposing (..)
@@ -10,7 +11,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 useArrows = False
-useDottedLine = False
+
 dottedLineColor = "grey"
 solidLineColor = "red"
 
@@ -23,7 +24,7 @@ getStrokeWidthFromStyle style =
     Just { strokeWidth } -> sqrt strokeWidth
     Nothing -> 2.0
 
-toPolygonElement : Style -> List Vector -> Svg msg
+toPolygonElement : Style -> List Point -> Svg msg
 toPolygonElement style pts = 
   let 
     s = 
@@ -39,7 +40,7 @@ toPolygonElement style pts =
       , fill "None"
       , points s ] []
 
-toPolylineElement : Style -> List Vector -> Svg msg
+toPolylineElement : Style -> List Point -> Svg msg
 toPolylineElement style pts = 
   let 
     s = 
@@ -55,7 +56,7 @@ toPolylineElement style pts =
       , fill "None"
       , points s ] []
 
-toCurveElement : Style -> Vector -> Vector -> Vector -> Vector -> Svg msg
+toCurveElement : Style -> Point -> Point -> Point -> Point -> Svg msg
 toCurveElement style pt1 pt2 pt3 pt4 = 
   let 
     toStr {x, y} = (toString x) ++ " " ++ (toString y)
@@ -81,7 +82,7 @@ toSvgElement style shape =
       toCurveElement style point1 point2 point3 point4 
     x -> text "nothing"
 
-toDottedBoxPolylineElement : List Vector -> Svg msg
+toDottedBoxPolylineElement : List Point -> Svg msg
 toDottedBoxPolylineElement pts = 
   let 
     s = 
@@ -98,7 +99,7 @@ toDottedBoxPolylineElement pts =
       , fill "None"
       , points s ] []
 
-toSolidBoxPolylineElement : List Vector -> Svg msg
+toSolidBoxPolylineElement : List Point -> Svg msg
 toSolidBoxPolylineElement pts = 
   let 
     s = 
@@ -114,15 +115,15 @@ toSolidBoxPolylineElement pts =
       , fill "None"
       , points s ] []
 
-toBoxPolylineElement : List Vector -> Svg msg 
+toBoxPolylineElement : List Point -> Svg msg 
 toBoxPolylineElement = 
-  if useDottedLine then toDottedBoxPolylineElement else toSolidBoxPolylineElement
+  if useArrows then toDottedBoxPolylineElement else toSolidBoxPolylineElement
 
-toBoxLine : (Vector -> Vector) -> Vector -> Vector -> (String, String) -> Svg msg
-toBoxLine m v1 v2 (name, color) = 
+toBoxLine : (Point -> Point) -> Point -> Point -> (String, String) -> Svg msg
+toBoxLine m p1 p2 (name, color) = 
   let 
-    w1 = m v1 
-    w2 = m (add v1 v2) 
+    w1 = m p1 
+    w2 = m p2 
   in
     Svg.line 
       [ x1 <| toString w1.x
@@ -142,19 +143,32 @@ bcolor = "#2381bf"
 ccolor : String 
 ccolor = "#27b15b"
 
-toBoxArrows : (Vector -> Vector) -> Box -> List (Svg msg)
-toBoxArrows m { a, b, c } =
-  [ toBoxLine m { x = 0, y = 0 } a ("a-arrow", acolor)
-  , toBoxLine m a b ("b-arrow", bcolor)
-  , toBoxLine m a c ("c-arrow", ccolor) ]
+vectorToPoint : Vector -> Point 
+vectorToPoint { dx, dy } = { x = dx, y = dy } 
 
-toBoxShape : (Vector -> Vector) -> Box -> List Vector
+toBoxArrows : (Point -> Point) -> Box -> List (Svg msg)
+toBoxArrows m { a, b, c } =
+  let
+    pt0 = { x = 0, y = 0 }
+    pta = vectorToPoint a
+    ptb = vectorToPoint (add a b)
+    ptc = vectorToPoint (add a c) 
+  in
+    [ toBoxLine m pt0 pta ("a-arrow", acolor)
+    , toBoxLine m pta ptb ("b-arrow", bcolor)
+    , toBoxLine m pta ptc ("c-arrow", ccolor) ]
+
+toBoxShape : (Point -> Point) -> Box -> List Point
 toBoxShape m { a, b, c } = 
   let
     b2 = add a b
     c2 = add a c 
     d = add a (add b c)
-    pts = [m a, m b2, m d, m c2, m a]
+    pt0 = vectorToPoint a
+    pt1 = vectorToPoint b2
+    pt2 = vectorToPoint d
+    pt3 = vectorToPoint c2
+    pts = [m pt0, m pt1, m pt2, m pt3, m pt0]
   in
     pts
 
@@ -254,13 +268,13 @@ toSvgWithBoxes bounds boxes rendering =
   let
     (w, h) = bounds
     viewBoxValue = ["0", "0", String.fromInt w, String.fromInt h] |> String.join " "
-    mirror = mirrorVector <| toFloat h
+    mirror = mirrorPoint <| toFloat h
     boxShapes = boxes |> List.map (toBoxShape mirror) |> List.map toBoxPolylineElement
     boxArrows = boxes |> List.concatMap (toBoxArrows mirror)
     boxLines = if useArrows then boxShapes ++ boxArrows else boxShapes
     toElement (shape, style) = toSvgElement style (mirrorShape mirror shape)
     things = rendering |> List.map toElement
-    axes = createAxes w h
+    axes = if useArrows then (createAxes w h) else []
     markers =
       [ ("a-arrow", acolor)
       , ("b-arrow", bcolor)

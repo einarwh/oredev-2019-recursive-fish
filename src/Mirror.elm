@@ -1,13 +1,13 @@
 module Mirror exposing (..) 
 
-import Vector exposing (Vector)
+import Point exposing (Point)
 import Shape exposing (..)
 
-mirrorVector : Float -> Vector -> Vector 
-mirrorVector height { x, y } = 
+mirrorPoint : Float -> Point -> Point 
+mirrorPoint height { x, y } = 
   { x = x, y = height - y }
 
-mirrorShape : (Vector -> Vector) -> Shape -> Shape
+mirrorShape : (Point -> Point) -> Shape -> Shape
 mirrorShape mirror shape = 
   case shape of  
     Line { lineStart, lineEnd } -> 

@@ -10,30 +10,24 @@ type alias Box =
 turnBox : Box -> Box
 turnBox { a, b, c } =
   { a = add a b 
-  , b = c 
+  , b = c
   , c = neg b }
 
 flipBox : Box -> Box
 flipBox { a, b, c } =
-  { a = add a b 
+  { a = add a b
   , b = neg b
   , c = c }
 
 tossBox : Box -> Box
 tossBox { a, b, c } =
-  { a = add a (scale 0.5 (add b c))
-  , b = scale 0.5 (add b c)
-  , c = scale 0.5 (sub c b) }
-
--- tossedBoxes : gather intermediate tossed boxes
-tossedBoxes : Int -> Box -> List Box
-tossedBoxes n box = 
-  if n < 1 then [ box ]
-  else box :: tossedBoxes (n - 1) (tossBox box)
+  { a = add a (add (scale 0.5 b) (scale 0.5 c))
+  , b = add (scale 0.5 b) (scale 0.5 c)
+  , c = sub (scale 0.5 c) (scale 0.5 b) }
 
 moveVertically : Float -> Box -> Box
 moveVertically f { a, b, c } =
-  { a = add a (scale f c) 
+  { a = add a (scale f c)
   , b = b
   , c = c }
 
@@ -44,12 +38,12 @@ scaleVertically f { a, b, c } =
   , c = scale f c }
 
 splitVertically : Float -> Box -> (Box, Box)
-splitVertically f box = 
+splitVertically f box =
   let
     top = box |> moveVertically (1 - f) |> scaleVertically f
-    bot = box |> scaleVertically (1 - f) 
-  in 
-    (top, bot)  
+    bot = box |> scaleVertically (1 - f)
+  in
+    (top, bot)
 
 moveHorizontally : Float -> Box -> Box
 moveHorizontally f { a, b, c } =
@@ -70,36 +64,4 @@ splitHorizontally f box =
     right = box |> moveHorizontally f |> scaleHorizontally (1 - f)
   in
     (left, right)
-
-sideBoxes : Int -> Box -> List Box
-sideBoxes n box =
-  if n < 1 then [ box ]
-  else
-    let
-      (top, bot) = splitVertically 0.5 box
-      (nw, ne) = splitHorizontally 0.5 top
-      (sw, se) = splitHorizontally 0.5 bot
-    in
-      sideBoxes (n - 1) nw ++ sideBoxes (n - 1) ne ++ [sw, se]
-
-westSideBoxes : Int -> Box -> List Box
-westSideBoxes n box =
-  if n < 1 then [ box ]
-  else
-    let
-      (top, bot) = splitVertically 0.5 box
-      (nw, ne) = splitHorizontally 0.5 top
-      (sw, se) = splitHorizontally 0.5 bot
-    in
-      westSideBoxes (n - 1) nw ++ westSideBoxes (n - 1) sw ++ [ne, se]
-
-cornerBoxes : Int -> Box -> List Box
-cornerBoxes n box =
-  if n < 1 then [ box ]
-  else
-    let
-      (top, bot) = splitVertically 0.5 box
-      (nw, ne) = splitHorizontally 0.5 top
-      (sw, se) = splitHorizontally 0.5 bot
-    in
-      cornerBoxes (n - 1) nw ++ sideBoxes (n - 1) ne ++ westSideBoxes (n - 1) sw ++ [se]
+    

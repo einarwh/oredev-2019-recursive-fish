@@ -1,32 +1,32 @@
 module Shape exposing (..)
 
-import Vector exposing (..)
+import Point exposing (..)
 
 type alias LineShape = 
-  { lineStart : Vector
-  , lineEnd : Vector}
+  { lineStart : Point
+  , lineEnd : Point}
 
 type alias PolygonShape = 
-  { points : List Vector }
+  { points : List Point }
 
 type alias PolylineShape = 
-  { pts : List Vector }
+  { pts : List Point }
 
 type alias CurveShape = 
-  { point1 : Vector
-  , point2 : Vector
-  , point3 : Vector
-  , point4 : Vector }
+  { point1 : Point
+  , point2 : Point
+  , point3 : Point
+  , point4 : Point }
 
 type alias BezierShape = 
-  { controlPoint1 : Vector
-  , controlPoint2 : Vector
-  , endPoint : Vector }
+  { controlPoint1 : Point
+  , controlPoint2 : Point
+  , endPoint : Point }
 
 type Shape = 
     Line LineShape 
   | Polygon PolygonShape
   | Polyline PolylineShape
   | Curve CurveShape
-  | Path (Vector, List BezierShape)
+  | Path (Point, List BezierShape)
   

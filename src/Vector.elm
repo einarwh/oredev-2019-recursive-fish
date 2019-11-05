@@ -1,18 +1,18 @@
 module Vector exposing (..)
 
-type alias Vector = { x : Float, y : Float }
+type alias Vector = { dx : Float, dy : Float }
 
 add : Vector -> Vector -> Vector 
-add v1 v2 = { x = v1.x + v2.x, y = v1.y + v2.y }
+add v1 v2 = { dx = v1.dx + v2.dx, dy = v1.dy + v2.dy }
 
 neg : Vector -> Vector 
-neg { x, y } = { x = -x, y = -y }
+neg { dx, dy } = { dx = -dx, dy = -dy }
 
 sub : Vector -> Vector -> Vector 
 sub v1 v2 = add v1 (neg v2)
 
 scale : Float -> Vector -> Vector
-scale f { x, y } = { x = f * x, y = f * y }
+scale f { dx, dy } = { dx = f * dx, dy = f * dy }
 
 length : Vector -> Float 
-length { x, y } = sqrt (x * x + y * y)
+length { dx, dy } = sqrt (dx * dx + dy * dy)
