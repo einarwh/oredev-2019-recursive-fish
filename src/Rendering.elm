@@ -73,6 +73,22 @@ toCurveElement style pt1 pt2 pt3 pt4 =
       , fill "None"
       , d dval ] []
 
+toArcElement : Style -> Point -> Point -> Point -> Svg msg
+toArcElement style pt1 pt2 pt3 = 
+  let 
+    toStr {x, y} = (toString x) ++ " " ++ (toString y)
+    pt1s = toStr pt1
+    pt2s = toStr pt2 
+    pt3s = toStr pt3 
+    dval = "M" ++ pt1s ++ " Q " ++ pt2s ++ " " ++ pt3s
+    sw = getStrokeWidthFromStyle style.stroke  
+  in 
+    Svg.path 
+      [ stroke "Black"
+      , strokeWidth <| toString sw
+      , fill "None"
+      , d dval ] []
+
 toSvgElement : Style -> Shape -> Svg msg
 toSvgElement style shape = 
   case shape of  
@@ -80,6 +96,8 @@ toSvgElement style shape =
     Polyline { pts } -> toPolylineElement style pts
     Curve { point1, point2, point3, point4 } ->
       toCurveElement style point1 point2 point3 point4 
+    Arc { startPoint, controlPoint, endPoint } -> 
+      toArcElement style startPoint controlPoint endPoint
     x -> text "nothing"
 
 toDottedBoxPolylineElement : List Point -> Svg msg

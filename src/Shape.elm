@@ -18,6 +18,11 @@ type alias CurveShape =
   , point3 : Point
   , point4 : Point }
 
+type alias ArcShape = 
+  { startPoint : Point
+  , controlPoint : Point
+  , endPoint : Point }
+
 type alias BezierShape = 
   { controlPoint1 : Point
   , controlPoint2 : Point
@@ -28,5 +33,6 @@ type Shape =
   | Polygon PolygonShape
   | Polyline PolylineShape
   | Curve CurveShape
+  | Arc ArcShape
   | Path (Point, List BezierShape)
   

@@ -39,6 +39,11 @@ mapShape m shape =
             , point3 = m point3 
             , point4 = m point4 } 
 
+    Arc { startPoint, controlPoint, endPoint } ->
+      Arc { startPoint = m startPoint
+          , controlPoint = m controlPoint 
+          , endPoint = m endPoint } 
+
     x -> x
 
 createPicture : List Shape -> Picture

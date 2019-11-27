@@ -21,4 +21,8 @@ mirrorShape mirror shape =
             , point2 = mirror point2 
             , point3 = mirror point3 
             , point4 = mirror point4 }
+    Arc { startPoint, controlPoint, endPoint } -> 
+      Arc { startPoint = mirror startPoint
+          , controlPoint = mirror controlPoint 
+          , endPoint = mirror endPoint }
     x -> x
