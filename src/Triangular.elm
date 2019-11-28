@@ -243,3 +243,25 @@ eyeShapes =
     arcs = arc1 :: arc2 :: cs
   in 
     triangulate arcs
+
+birdShapes : List Shape 
+birdShapes = 
+  let 
+    crv1 = createCurve (createPoint 0.000 0.000)
+                       (createPoint 0.159 0.051)
+                       (createPoint 0.220 0.112)
+                       (createPoint 0.266 0.243)
+    crv2 = createCurve (createPoint 0.266 0.243)
+                       (createPoint 0.364 0.224)
+                       (createPoint 0.430 0.187)
+                       (createPoint 0.491 0.107)
+    crv3 = createCurve (createPoint 0.491 0.107)
+                       (createPoint 0.561 0.019)
+                       (createPoint 0.650 0.000)
+                       (createPoint 0.750 0.022)
+    crv4 = createCurve (createPoint 0.750 0.022)
+                       (createPoint 0.832 0.038)
+                       (createPoint 0.899 0.035)
+                       (createPoint 1.000 0.000)
+  in 
+    triangulate [crv1, crv2, crv3, crv4] 

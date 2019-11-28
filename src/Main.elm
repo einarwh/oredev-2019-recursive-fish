@@ -25,7 +25,8 @@ main =
     bm = createPicture (boomerangShapes 2)
     es = createPicture eyeShapes
     fish = createPicture fishShapes
+    bs = createPicture birdShapes
     n = 4
   in     
-    box |> squareLimit 4 fw
-        |> render []
+    box |> bs
+        |> render [ box ]
